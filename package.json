@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "npm --prefix server run dev",
     "build": "vite build",
+    "build:server": "npm --prefix server run build",
+    "db:generate": "npm --prefix server run db:generate",
+    "db:seed": "npm --prefix server run db:seed",
     "preview": "vite preview"
   },
   "devDependencies": {

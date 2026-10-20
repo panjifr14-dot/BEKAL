@@ -55,7 +55,7 @@ export function renderMasukScreen() {
             </label>
             <div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-primary/30 transition-all">
               <span class="material-symbols-outlined text-outline text-[20px] ml-space-md shrink-0">mail</span>
-              <input class="w-full py-3.5 px-space-md bg-transparent text-on-surface font-body-md text-body-md placeholder:text-outline outline-none" id="identifierInput" placeholder="andi@domain.com" required type="text" value="andi@domain.com"/>
+              <input class="w-full py-3.5 px-space-md bg-transparent text-on-surface font-body-md text-body-md placeholder:text-outline outline-none" id="identifierInput" placeholder="Masukkan nama atau email Anda" required type="text"/>
             </div>
           </div>
 
@@ -66,7 +66,7 @@ export function renderMasukScreen() {
             </label>
             <div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-primary/30 transition-all">
               <span class="material-symbols-outlined text-outline text-[20px] ml-space-md shrink-0">lock</span>
-              <input class="w-full py-3.5 px-space-md bg-transparent text-on-surface font-body-md text-body-md placeholder:text-outline outline-none" id="loginPasswordInput" placeholder="••••••••" required type="password" value="DapurBijak2024!"/>
+              <input class="w-full py-3.5 px-space-md bg-transparent text-on-surface font-body-md text-body-md placeholder:text-outline outline-none" id="loginPasswordInput" placeholder="Masukkan kata sandi" required type="password"/>
               <button aria-label="Tampilkan sandi" class="p-space-sm mr-space-xs rounded-full text-secondary hover:text-on-surface hover:bg-surface-container-high transition-colors flex items-center justify-center" id="btnToggleLoginPassword" type="button">
                 <span class="material-symbols-outlined text-[20px]" id="loginEyeIcon">visibility</span>
               </button>

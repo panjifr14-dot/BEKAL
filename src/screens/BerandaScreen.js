@@ -13,7 +13,7 @@ export function renderBerandaScreen() {
         <div class="flex items-center justify-between pt-space-xs">
           <div class="flex flex-col">
             <div class="flex items-center gap-space-xs">
-              <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">Halo, Andi!</h1>
+              <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">Halo, ${state.user.name.split(' ')[0] || 'Sobat'}!</h1>
               <span class="text-xl animate-bounce">👋</span>
             </div>
             <p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Yuk, kelola bahan makanan dengan lebih bijak.</p>
@@ -74,7 +74,7 @@ export function renderBerandaScreen() {
             <button class="flex flex-col items-center p-2 rounded-xl bg-tertiary-fixed/40 hover:bg-tertiary-fixed/70 transition-colors cursor-pointer" id="filterPillarMedium">
               <div class="flex items-center gap-1 text-tertiary mb-1">
                 <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">warning</span>
-                <span class="font-headline-md text-headline-md font-bold text-tertiary">${mediumRiskCount || 1}</span>
+                <span class="font-headline-md text-headline-md font-bold text-tertiary">${mediumRiskCount}</span>
               </div>
               <span class="font-label-sm text-label-sm text-on-tertiary-fixed-variant font-bold">Risiko Sedang</span>
               <span class="font-body-sm text-body-sm text-on-surface-variant text-[10px] mt-0.5">3-5 hari lagi</span>
@@ -83,7 +83,7 @@ export function renderBerandaScreen() {
             <button class="flex flex-col items-center p-2 rounded-xl bg-secondary-container/50 hover:bg-secondary-container/80 transition-colors cursor-pointer" id="filterPillarSafe">
               <div class="flex items-center gap-1 text-primary mb-1">
                 <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                <span class="font-headline-md text-headline-md font-bold text-primary">${safeCount || 12}</span>
+                <span class="font-headline-md text-headline-md font-bold text-primary">${safeCount}</span>
               </div>
               <span class="font-label-sm text-label-sm text-on-secondary-container font-bold">Aman</span>
               <span class="font-body-sm text-body-sm text-on-surface-variant text-[10px] mt-0.5">> 7 hari lagi</span>
@@ -96,96 +96,80 @@ export function renderBerandaScreen() {
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Bahan Berisiko Tertinggi</h2>
-              <span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">Segera Olah</span>
+              <span class="px-2 py-0.5 rounded-full ${state.inventory.length === 0 ? 'bg-secondary-container text-primary' : 'bg-error-container text-on-error-container'} font-label-sm text-label-sm font-bold">
+                ${state.inventory.length === 0 ? 'Bebas Sampah' : 'Segera Olah'}
+              </span>
             </div>
             <button class="font-label-md text-label-md text-primary flex items-center gap-0.5 hover:underline font-semibold" id="btnSeeAllUrgent">
-              Lihat semua
+              Lihat semua (${state.inventory.length})
               <span class="material-symbols-outlined text-[16px]">chevron_right</span>
             </button>
           </div>
 
           <!-- Urgent Items List -->
           <div class="flex flex-col gap-2.5" id="urgentItemsContainer">
-            <!-- Item 1: Tomat Segar -->
-            <div class="w-full bg-surface-container-lowest rounded-2xl p-3 flex items-center justify-between shadow-sm transition-transform active:scale-[0.99] hover:shadow-md">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0 relative">
-                  <img class="w-full h-full object-cover" alt="Tomat Segar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1wR-H3Dj3GC9R6e-JZaBWNuDA7GdVL13qaEZBvlzXiPB2PYfvytB2mdc41F4gmfjNxcj8FsE6zvUmN2abwHuUVF-4mMrZP2xjRvZxQXgMHWpi4p2gvn6ey-2_pmWjMIdgdbds837OB3LkGuTtp76dQw2mUeHggnyPxPUriWc--MPoxOtkMWxkYpH54hqyH3_zD8fqrkVlnyICi8pq7p_S49AUbnUZXkDu0Fq-z8yD2Igqn7m8arxN"/>
+            ${state.inventory.length === 0 ? `
+              <div class="p-6 text-center bg-surface-container-lowest rounded-2xl flex flex-col items-center gap-3 shadow-xs">
+                <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary shadow-xs">
+                  <span class="material-symbols-outlined text-[28px]">kitchen</span>
                 </div>
-                <div class="flex flex-col min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Tomat Segar</span>
-                  </div>
-                  <span class="font-body-sm text-body-sm text-on-surface-variant font-medium">3,0 kg • Chiller Sayur</span>
-                  <div class="flex items-center gap-1 mt-1 text-error">
-                    <span class="material-symbols-outlined text-[14px]">timer</span>
-                    <span class="font-label-sm text-label-sm font-bold">2 hari lagi (15 Mei 2024)</span>
-                  </div>
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-headline-sm text-headline-sm font-bold text-on-surface">Kulkas Anda Masih Bersih & Bebas Risiko! ✨</span>
+                  <p class="font-body-sm text-body-sm text-secondary max-w-xs">Belum ada bahan makanan yang dicatat. Yuk masukkan belanjaan dapurmu atau pindai struk belanja.</p>
                 </div>
-              </div>
-              <div class="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-                <div class="w-8 h-8 rounded-lg bg-error flex items-center justify-center text-on-error font-headline-sm text-headline-sm font-bold shadow-sm">
-                  85
-                </div>
-                <button class="px-2.5 py-1 rounded-full bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-0.5 active:bg-primary active:text-on-primary transition-colors btn-cook-urgent" data-recipe="Sambal Tomat Terasi & Ayam Suwir">
-                  <span class="material-symbols-outlined text-[14px]">skillet</span> Masak
-                </button>
-              </div>
-            </div>
-
-            <!-- Item 2: Daging Ayam Fillet -->
-            <div class="w-full bg-surface-container-lowest rounded-2xl p-3 flex items-center justify-between shadow-sm transition-transform active:scale-[0.99] hover:shadow-md">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0 relative">
-                  <img class="w-full h-full object-cover" alt="Daging Ayam Fillet" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz-DacYyzA8P8T3Iyvann3ISnUne9sWd-8_5eQbCICYs40p7dx82E1vpo2TgNdIXRd7ICVyMHBvBl5_e0kr1OC1X8G5JBN50CyvtZaLsWMNcN_jL5yoz3a7VOhnvLDy4jaC2gUPgHEBwjgE2q-sCvboeSBZMpP1wotKUOrFZeQhyYThL6fCDawB8TiWwJk7MMFa7bwTrRcXgjKemKoededA0_trqT_L0QU4qNw1eOcSlZdw4tOEBN5"/>
-                </div>
-                <div class="flex flex-col min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Daging Ayam Fillet</span>
-                  </div>
-                  <span class="font-body-sm text-body-sm text-on-surface-variant font-medium">500 g • Kulkas Utama</span>
-                  <div class="flex items-center gap-1 mt-1 text-error">
-                    <span class="material-symbols-outlined text-[14px]">warning</span>
-                    <span class="font-label-sm text-label-sm font-bold">Besok (12 Mei 2024)</span>
-                  </div>
+                <div class="flex items-center gap-2 mt-1">
+                  <button class="px-3.5 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all" id="btnGoToPantryAdd">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    <span>+ Tambah Bahan</span>
+                  </button>
+                  <button class="px-3.5 py-2 rounded-xl bg-secondary-container text-primary font-label-md text-label-md font-bold flex items-center gap-1 shadow-xs active:scale-95 transition-all" id="btnGoToPantryScan">
+                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                    <span>Pindai Struk</span>
+                  </button>
                 </div>
               </div>
-              <div class="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-                <div class="w-8 h-8 rounded-lg bg-error flex items-center justify-center text-on-error font-headline-sm text-headline-sm font-bold shadow-sm">
-                  80
-                </div>
-                <button class="px-2.5 py-1 rounded-full bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-0.5 active:bg-primary active:text-on-primary transition-colors btn-cook-urgent" data-recipe="Semur Ayam Tomat Manis Gurih">
-                  <span class="material-symbols-outlined text-[14px]">skillet</span> Masak
-                </button>
-              </div>
-            </div>
-
-            <!-- Item 3: Susu UHT -->
-            <div class="w-full bg-surface-container-lowest rounded-2xl p-3 flex items-center justify-between shadow-sm transition-transform active:scale-[0.99] hover:shadow-md">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0 relative">
-                  <img class="w-full h-full object-cover" alt="Susu UHT Plain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvGRZFQgISRDodFOwDdIZt0dBad-vl46ZhytHUdcKtL4oFbZ0FfbR6zb4etOiN_ytMWc-M09FqxTK83uxfkyLaCSTcNZ_X5jlOLkF_lzc6dho0Vw4mULdY2qv0WUnk41CaGRM6CAFxyjpKsY3PHp2uyyZI06NY-RaAHBLXaNbUYTDZmnfne254MFR71L2BC-JSXtaifM4qabKM-W87ob-tBTwUawDxK5MH1foqZ7B_7c03yVX9N0IS"/>
-                </div>
-                <div class="flex flex-col min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Susu UHT Plain</span>
+            ` : [...state.inventory].sort((a, b) => (b.risk || 0) - (a.risk || 0)).slice(0, 4).map(item => {
+              const isHigh = item.risk >= 75;
+              const isMed = item.risk >= 50 && item.risk < 75;
+              const badgeBg = isHigh ? 'bg-error text-on-error' : isMed ? 'bg-tertiary text-on-tertiary' : 'bg-secondary-container text-primary';
+              const textClr = isHigh ? 'text-error' : isMed ? 'text-tertiary' : 'text-primary';
+              const iconName = isHigh ? 'timer' : isMed ? 'warning' : 'schedule';
+              const matchRecipe = item.name.includes('Tomat') ? 'Sambal Tomat Terasi & Ayam Suwir' :
+                                  item.name.includes('Ayam') ? 'Semur Ayam Tomat Manis Gurih' :
+                                  item.name.includes('Bayam') ? 'Tumis Bayam Bawang Putih' : 'Sup Creamy Dapur Segar';
+              return `
+                <div class="w-full bg-surface-container-lowest rounded-2xl p-3 flex items-center justify-between shadow-sm transition-transform active:scale-[0.99] hover:shadow-md" data-risk-level="${isHigh ? 'high' : isMed ? 'medium' : 'safe'}">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0 relative">
+                      <img class="w-full h-full object-cover" alt="${item.name}" src="${item.img}"/>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">${item.name}</span>
+                      </div>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant font-medium">${item.weight} ${item.unit} • ${item.location}</span>
+                      <div class="flex items-center gap-1 mt-1 ${textClr}">
+                        <span class="material-symbols-outlined text-[14px]">${iconName}</span>
+                        <span class="font-label-sm text-label-sm font-bold">${item.expiryDays <= 1 ? 'Besok Kedaluwarsa' : `${item.expiryDays} hari lagi (${item.expiryDate})`}</span>
+                      </div>
+                    </div>
                   </div>
-                  <span class="font-body-sm text-body-sm text-on-surface-variant font-medium">1 L • Pintu Kulkas</span>
-                  <div class="flex items-center gap-1 mt-1 text-tertiary">
-                    <span class="material-symbols-outlined text-[14px]">schedule</span>
-                    <span class="font-label-sm text-label-sm font-bold">5 hari lagi (20 Mei 2024)</span>
+                  <div class="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
+                    <div class="w-8 h-8 rounded-lg ${badgeBg} flex items-center justify-center font-headline-sm text-headline-sm font-bold shadow-sm">
+                      ${item.risk}
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <button class="px-2.5 py-1 rounded-full bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-0.5 active:bg-primary active:text-on-primary transition-colors btn-cook-urgent" data-recipe="${matchRecipe}" data-name="${item.name}">
+                        <span class="material-symbols-outlined text-[14px]">skillet</span> Masak
+                      </button>
+                      <button class="w-7 h-7 rounded-full bg-surface-container hover:bg-primary hover:text-on-primary text-secondary flex items-center justify-center transition-colors btn-consume-quick" data-id="${item.id}" title="Tandai Habis / Dikonsumsi">
+                        <span class="material-symbols-outlined text-[14px]">check</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-                <div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-headline-sm text-headline-sm font-bold shadow-sm">
-                  45
-                </div>
-                <button class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-bold flex items-center gap-0.5 active:bg-primary active:text-on-primary transition-colors btn-note-urgent">
-                  <span class="material-symbols-outlined text-[14px]">edit</span> Catat
-                </button>
-              </div>
-            </div>
+              `;
+            }).join('')}
           </div>
         </div>
 

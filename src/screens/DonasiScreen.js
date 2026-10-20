@@ -2,7 +2,9 @@
 import { state } from '../state.js';
 
 export function renderDonasiScreen() {
+  const excessItems = state.inventory.filter(i => (i.risk || 0) >= 50);
   const selectedCount = Object.values(state.excessSelected).filter(Boolean).length;
+  const historyList = state.donationHistory || [];
 
   return `
     <div class="flex flex-col w-full min-h-screen bg-surface px-margin pt-28 pb-28">
@@ -56,9 +58,11 @@ export function renderDonasiScreen() {
           </div>
         </section>
 
-        <!-- View 1: Interactive Map Canvas -->
-        <section class="mb-space-lg" id="donasiMapView">
-          <div class="relative w-full h-[320px] rounded-2xl overflow-hidden shadow-sm bg-surface-container border border-surface-container-high">
+        <!-- ============================================== -->
+        <!-- VIEW 1: INTERACTIVE MAP CANVAS -->
+        <!-- ============================================== -->
+        <div id="donasiMapView" class="flex flex-col">
+          <div class="relative w-full h-[320px] rounded-2xl overflow-hidden shadow-sm bg-surface-container border border-surface-container-high mb-space-md">
             <!-- Dynamic Vector Map Canvas with background -->
             <div class="w-full h-full bg-cover bg-center transition-transform duration-700" id="mapBackground" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBv5T3elnWqqL7NTuaZ9bvXJZHeDgbxUlfHFXjRL041s9hXW8v0oaxgi3Kcwn36Vy4wSNiV-jgHkVwFQ_DPqvdi0B0qcRvNu8TnHC4QJR7aGFIQUDbqx3AJhkd31McsBpMGCmPo36i4mELNH9lxc4uu1JRYXR9Wt3nlO2syqkhJBCvHtlauBQL7IXNmLUhN_CRR79Oi-pAMnQILLc9dYH-YkIvTYd0IfWwmlrK76RzPwD-VgzSAoylF')"></div>
             <!-- Map Ambient Gradient Overlay -->
@@ -122,20 +126,11 @@ export function renderDonasiScreen() {
               </div>
             </div>
 
-            <!-- Pin C: Komunitas Berbagi Pangan -->
-            <div class="absolute bottom-[24%] right-[32%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-10 map-pin" data-partner="Komunitas Berbagi Pangan">
+            <!-- Pin C: Shelter Satwa Peduli -->
+            <div class="absolute bottom-[24%] right-[32%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-10 map-pin" data-partner="Shelter Satwa Peduli">
               <div class="relative flex flex-col items-center">
                 <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-md transform transition-transform group-hover:scale-110">
-                  <span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pin D: Kedai Kopi & Roti -->
-            <div class="absolute bottom-[28%] left-[16%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-10 map-pin" data-partner="Kedai Kopi & Roti">
-              <div class="relative flex flex-col items-center">
-                <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-md transform transition-transform group-hover:scale-110">
-                  <span class="material-symbols-outlined text-[18px]">coffee</span>
+                  <span class="material-symbols-outlined text-[18px]">pets</span>
                 </div>
               </div>
             </div>
@@ -151,178 +146,226 @@ export function renderDonasiScreen() {
               <span class="material-symbols-outlined text-[20px]">near_me</span>
             </button>
           </div>
-        </section>
 
-        <!-- Quick Excess Pantry Items Selector Banner -->
-        <section class="mb-space-lg">
-          <div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-tertiary text-[18px]">inventory_2</span>
-                <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Bahan Berlebih di Dapurmu</h2>
+          <!-- Quick Excess Pantry Items Selector Banner -->
+          <section class="mb-space-lg">
+            <div class="bg-surface-container-lowest p-space-md rounded-2xl shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-tertiary text-[18px]">inventory_2</span>
+                  <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Pilih Bahan Surplus Dapurmu</h2>
+                </div>
+                <span class="bg-error-container text-on-error-container px-2 py-0.5 rounded-full font-label-sm text-label-sm font-bold">
+                  ${selectedCount} Dipilih
+                </span>
               </div>
-              <span class="bg-error-container text-on-error-container px-2 py-0.5 rounded-full font-label-sm text-label-sm font-bold">
-                ${selectedCount} Kritis
-              </span>
-            </div>
-            <p class="font-body-sm text-body-sm text-secondary mb-space-sm leading-snug">Pilih stok bahan yang ingin kamu salurkan hari ini:</p>
-            
-            <!-- Horizontal Inventory Pills with Quantities -->
-            <div class="grid grid-cols-3 gap-space-xs">
-              <!-- Item 1 -->
-              <label class="flex flex-col p-2 rounded-xl bg-surface-container-low cursor-pointer transition-all hover:bg-secondary-container/40 relative">
-                <input ${state.excessSelected['tomat-segar'] ? 'checked' : ''} class="absolute top-2 right-2 accent-primary h-4 w-4 rounded excess-checkbox" data-id="tomat-segar" type="checkbox"/>
-                <div class="w-8 h-8 rounded-lg overflow-hidden mb-1.5 bg-surface-container">
-                  <img class="w-full h-full object-cover" alt="Tomat Segar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5tQ-JKbp1fbUwUmwbnt39zmOzvABhnuldJhP0YzhWNtEhQp95YG_nsMTRYbJRwbOZqYIdkYIEDDVRak8Owf0F4GmkjKFymRgZ-KZfXmDYZJWLg3rgHDYr1eCPOdYfNtgUkgHY0UldObBmPlv8FO104-VrXMEKAD8YQT3Qa4x5-0qSrfSkxUpIuxyuSNkekDXg5ECvkZ7BtO6AzYJq9oS98pImcxxOWMByq5VIgoPcZii864uusEoC"/>
-                </div>
-                <span class="font-label-md text-label-md text-on-surface font-bold truncate">Tomat Segar</span>
-                <span class="font-body-sm text-body-sm text-secondary font-medium">2.0 kg</span>
-                <span class="font-label-sm text-label-sm text-error mt-0.5 font-bold">Sisa 2 Hari</span>
-              </label>
-
-              <!-- Item 2 -->
-              <label class="flex flex-col p-2 rounded-xl bg-surface-container-low cursor-pointer transition-all hover:bg-secondary-container/40 relative">
-                <input ${state.excessSelected['daging-ayam'] ? 'checked' : ''} class="absolute top-2 right-2 accent-primary h-4 w-4 rounded excess-checkbox" data-id="daging-ayam" type="checkbox"/>
-                <div class="w-8 h-8 rounded-lg overflow-hidden mb-1.5 bg-surface-container">
-                  <img class="w-full h-full object-cover" alt="Daging Ayam" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFqqEklZvr3s5IZ361Ezp8bP3sj9--KraWT_TM3boJLDbGftZ7uAzU7f44FVDTcdmg3u6SNBhCrUfjSKs_oCk3-EsKbpKACJYD-X0CZ438dEP_n1lBVMKuWu5BknOTiZioekgfUmslM7jYRQ51dOg_WUcb8yznxwsOfEpulOMnLcnx4vfBWSNFByGrFcNhkF3EMYqPjpDbzttYTjlD41ZzTJadE_ehGuuB5Hb-Ide0UGLiQA7t1-54"/>
-                </div>
-                <span class="font-label-md text-label-md text-on-surface font-bold truncate">Daging Ayam</span>
-                <span class="font-body-sm text-body-sm text-secondary font-medium">0.5 kg</span>
-                <span class="font-label-sm text-label-sm text-error mt-0.5 font-bold">Sisa 1 Hari</span>
-              </label>
-
-              <!-- Item 3 -->
-              <label class="flex flex-col p-2 rounded-xl bg-surface-container-low cursor-pointer transition-all hover:bg-secondary-container/40 relative">
-                <input ${state.excessSelected['bayam-hijau'] ? 'checked' : ''} class="absolute top-2 right-2 accent-primary h-4 w-4 rounded excess-checkbox" data-id="bayam-hijau" type="checkbox"/>
-                <div class="w-8 h-8 rounded-lg overflow-hidden mb-1.5 bg-surface-container">
-                  <img class="w-full h-full object-cover" alt="Bayam Hijau" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG9cUsfY3Hr4ADazWm0LK75LnWuIKsFAX-p_5VwrtE4M90M9k8yHJJTD3MucpGD1_9UNSjJwhFAx47aVcJC3zjcVDbkzXCOP8VY6Ya2bVkenkmbdYaZI3lDLDfYtziTwVlBWf3T-Ya3k9YjUIBJqsLUu9zBqTRhivgBbYyK-mZYuJoafql2dgOM1lhoRn5xRyhTwZwLRUT0PCRE7r3_qnwktYtDUtsX_1RgXmq2iswLeLWMSdQVgKC"/>
-                </div>
-                <span class="font-label-md text-label-md text-on-surface font-bold truncate">Bayam Hijau</span>
-                <span class="font-body-sm text-body-sm text-secondary font-medium">2 Ikat</span>
-                <span class="font-label-sm text-label-sm text-tertiary mt-0.5 font-bold">Sisa 3 Hari</span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- Featured Nearby Rescue Partner Card (Active Focus) -->
-        <section class="mb-space-lg" id="partnerCardBuSari">
-          <div class="flex items-center justify-between mb-space-sm">
-            <h2 class="font-headline-md text-headline-md text-on-surface font-bold">Mitra Penyelamat Terdekat</h2>
-            <button class="font-label-sm text-label-sm text-primary font-bold flex items-center gap-0.5">
-              Lihat Semua
-              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-            </button>
-          </div>
-          <!-- Partner Card: Warung Makan Bu Sari -->
-          <div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-md flex flex-col gap-space-md border border-primary/20">
-            <!-- Header Partner Info -->
-            <div class="flex gap-space-md">
-              <div class="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-surface-container shadow-xs">
-                <img class="w-full h-full object-cover" alt="Warung Makan Bu Sari" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEaQ3aXRMK8nh--r84XwAiiA2WkzqMmV0brIrhckaoGcfljIPsPltZS3JCYEqy5j46lOnLY27IBhaWcBdFyNGl3iOoFmZZE1OQdh0Q37WR1srbEEngdJm96VQFHAajhQtiBmEitNlx8yA-J7CAJK3li7MoQEuxAqBcpo5Vti1r0VSpWqtzo3DaxV_zPnglB8Q-v1TJFe0JmssCsDE9qDISbUBJ87DE77_AR-ZgY1vx40n1t_DaX_Dw"/>
+              <p class="font-body-sm text-body-sm text-secondary mb-space-sm leading-snug">Centang bahan berlebih yang ingin kamu donasikan hari ini:</p>
+              
+              <!-- Dynamic Inventory Surplus Pills -->
+              <div class="grid grid-cols-3 gap-space-xs">
+                ${state.inventory.map(item => `
+                  <label class="flex flex-col p-2 rounded-xl bg-surface-container-low cursor-pointer transition-all hover:bg-secondary-container/40 relative">
+                    <input ${state.excessSelected[item.id] ? 'checked' : ''} class="absolute top-2 right-2 accent-primary h-4 w-4 rounded excess-checkbox" data-id="${item.id}" type="checkbox"/>
+                    <div class="w-8 h-8 rounded-lg overflow-hidden mb-1.5 bg-surface-container">
+                      <img class="w-full h-full object-cover" alt="${item.name}" src="${item.img}"/>
+                    </div>
+                    <span class="font-label-md text-label-md text-on-surface font-bold truncate">${item.name}</span>
+                    <span class="font-body-sm text-body-sm text-secondary font-medium">${item.weight} ${item.unit}</span>
+                    <span class="font-label-sm text-label-sm ${item.risk >= 75 ? 'text-error' : 'text-tertiary'} mt-0.5 font-bold">
+                      ${item.expiryDays <= 1 ? 'Besok Exp' : `${item.expiryDays} Hari`}
+                    </span>
+                  </label>
+                `).join('')}
               </div>
-              <div class="flex flex-col min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 mb-1">
-                  <span class="px-2 py-0.5 rounded-full bg-secondary-container text-primary font-label-sm text-label-sm font-bold">
-                    UMKM Kuliner
-                  </span>
-                  <div class="flex items-center text-tertiary gap-0.5 text-[12px] font-bold">
-                    <span class="material-symbols-outlined text-[14px] text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span>
-                    <span>4.9</span>
+            </div>
+          </section>
+
+          <!-- Featured Nearby Rescue Partner Card (Active Focus) -->
+          <section class="mb-space-lg" id="partnerCardBuSari">
+            <div class="flex items-center justify-between mb-space-sm">
+              <h2 class="font-headline-md text-headline-md text-on-surface font-bold">Mitra Penyelamat Terdekat</h2>
+              <span class="text-xs text-primary font-bold">Bisa Langsung Jemput</span>
+            </div>
+            <!-- Partner Card: Warung Makan Bu Sari -->
+            <div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-md flex flex-col gap-space-md border border-primary/20">
+              <div class="flex gap-space-md">
+                <div class="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-surface-container shadow-xs">
+                  <img class="w-full h-full object-cover" alt="Warung Makan Bu Sari" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEaQ3aXRMK8nh--r84XwAiiA2WkzqMmV0brIrhckaoGcfljIPsPltZS3JCYEqy5j46lOnLY27IBhaWcBdFyNGl3iOoFmZZE1OQdh0Q37WR1srbEEngdJm96VQFHAajhQtiBmEitNlx8yA-J7CAJK3li7MoQEuxAqBcpo5Vti1r0VSpWqtzo3DaxV_zPnglB8Q-v1TJFe0JmssCsDE9qDISbUBJ87DE77_AR-ZgY1vx40n1t_DaX_Dw"/>
+                </div>
+                <div class="flex flex-col min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5 mb-1">
+                    <span class="px-2 py-0.5 rounded-full bg-secondary-container text-primary font-label-sm text-label-sm font-bold">
+                      UMKM Kuliner
+                    </span>
+                    <div class="flex items-center text-tertiary gap-0.5 text-[12px] font-bold">
+                      <span class="material-symbols-outlined text-[14px] text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span>
+                      <span>4.9 (124 Donasi)</span>
+                    </div>
+                  </div>
+                  <h3 class="font-headline-sm text-headline-sm text-on-surface truncate font-bold">Warung Makan Bu Sari</h3>
+                  <p class="font-body-sm text-body-sm text-secondary truncate">Jl. Melati No. 12 • <strong class="text-primary font-bold">0.3 km</strong></p>
+                  <div class="flex items-center gap-1 text-[11px] text-primary mt-1 font-semibold">
+                    <span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    <span>Kurir siap jemput ke rumahmu (Estimasi 15 mnt)</span>
                   </div>
                 </div>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface truncate font-bold">Warung Makan Bu Sari</h3>
-                <p class="font-body-sm text-body-sm text-secondary truncate">Jl. Melati No. 12 • <strong class="text-primary font-bold">0.3 km</strong></p>
-                <div class="flex items-center gap-1 text-[11px] text-primary mt-1 font-semibold">
-                  <span class="material-symbols-outlined text-[14px]">check_circle</span>
-                  <span>Bisa jemput langsung ke rumahmu</span>
-                </div>
               </div>
-            </div>
-            <!-- Ingredient Needs Matching Bar -->
-            <div class="bg-surface-container-low p-space-sm rounded-xl flex flex-col gap-1.5">
-              <div class="flex items-center justify-between text-label-sm font-label-sm">
-                <span class="text-secondary font-medium">Bahan yang Sangat Dibutuhkan:</span>
-                <span class="text-primary font-bold" id="matchBadgeLabel">Cocok ${selectedCount} Bahan Kamu</span>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                <span class="px-2 py-0.5 rounded-lg bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-1">
-                  <span class="material-symbols-outlined text-[13px]">check</span> Tomat Segar
-                </span>
-                <span class="px-2 py-0.5 rounded-lg bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-1">
-                  <span class="material-symbols-outlined text-[13px]">check</span> Daging Ayam
-                </span>
-                <span class="px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium">
-                  Sayuran Hijau
-                </span>
-                <span class="px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium">
-                  Bawang Merah
-                </span>
-              </div>
-            </div>
-            <!-- Dual Action Buttons -->
-            <div class="grid grid-cols-2 gap-space-sm pt-1">
-              <!-- Action 1: Donasi Gratis -->
-              <button class="w-full py-3 px-space-sm rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm hover:opacity-95 active:scale-98 transition-all btn-partner-action" data-type="donasi" data-partner="Warung Makan Bu Sari">
-                <span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
-                <span>Donasi (Gratis)</span>
-              </button>
-              <!-- Action 2: Jual Murah -->
-              <button class="w-full py-3 px-space-sm rounded-xl bg-secondary-container text-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 hover:bg-secondary-container/70 active:scale-98 transition-all btn-partner-action" data-type="jual" data-partner="Warung Makan Bu Sari">
-                <span class="material-symbols-outlined text-[18px]">sell</span>
-                <span>Jual Murah (-60%)</span>
-              </button>
-            </div>
-          </div>
-        </section>
 
-        <!-- Secondary Partner Row 2: Dapur Nusa Catering -->
-        <section class="mb-space-lg" id="partnerCardDapurNusa">
-          <div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm hover:shadow-md transition-shadow">
-            <div class="flex gap-space-md items-center">
-              <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-container shadow-xs">
-                <img class="w-full h-full object-cover" alt="Dapur Nusa Catering" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiNvOGvnLC9S7X_alVpLg3w4ZQCfmFmoIdPlRpKtHCgbVgEWCxtosTELw2iwknyZOGIuVdICzXxIHJaQugFyhX8PVHil1bf95qTWwYYOAS_gPPXJhGgOd-X7deYpa_SVObZi9OnUiRo8kd8AjKIFKbpo0b42UF0SHzJsUzdNMhipfSXdtosqwAAHDZCQpESs6DfGPrd5Mw2SPgZA2eXj5ZMjVrzyPoKc2ruUBjL-pDzRpD7bOUYAUq"/>
-              </div>
-              <div class="flex flex-col min-w-0 flex-1">
-                <div class="flex items-center gap-1 mb-0.5">
-                  <span class="px-2 py-0.2 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">
-                    Katering Harian
+              <!-- Matching Needs Bar -->
+              <div class="bg-surface-container-low p-space-sm rounded-xl flex flex-col gap-1.5">
+                <div class="flex items-center justify-between text-label-sm font-label-sm">
+                  <span class="text-secondary font-medium">Bahan yang Sangat Dibutuhkan:</span>
+                  <span class="text-primary font-bold" id="matchBadgeLabel">Cocok ${selectedCount} Bahan Kamu</span>
+                </div>
+                <div class="flex flex-wrap gap-1">
+                  <span class="px-2 py-0.5 rounded-lg bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px]">check</span> Tomat Segar
                   </span>
-                  <span class="font-label-sm text-label-sm text-secondary font-medium">• 0.55 km</span>
+                  <span class="px-2 py-0.5 rounded-lg bg-secondary-container text-primary font-label-sm text-label-sm font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px]">check</span> Daging Ayam
+                  </span>
+                  <span class="px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium">
+                    Sayuran Hijau
+                  </span>
                 </div>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface truncate font-bold">Dapur Nusa Catering</h3>
-                <p class="font-body-sm text-body-sm text-secondary truncate">Menerima: Sayur mayur, telur, bumbu masak</p>
               </div>
-            </div>
-            <div class="flex items-center justify-between pt-1">
-              <span class="font-label-sm text-label-sm text-secondary font-medium">Estimasi jemput: 20 menit</span>
-              <div class="flex gap-space-xs">
-                <button class="px-3 py-1.5 rounded-xl bg-surface-container text-primary font-label-sm text-label-sm font-bold hover:bg-secondary-container btn-partner-action" data-type="donasi" data-partner="Dapur Nusa Catering">
-                  Donasi
-                </button>
-                <button class="px-3 py-1.5 rounded-xl bg-secondary-container text-primary font-label-sm text-label-sm font-bold hover:opacity-90 btn-partner-action" data-type="jual" data-partner="Dapur Nusa Catering">
-                  Jual Murah
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        <!-- Community Impact Summary Strip -->
-        <section>
-          <div class="bg-surface-container p-space-md rounded-2xl flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-space-sm">
-              <div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center text-primary shadow-xs">
-                <span class="material-symbols-outlined text-[22px]">workspace_premium</span>
-              </div>
-              <div class="flex flex-col">
-                <span class="font-label-md text-label-md font-bold text-on-surface">Total Dampak Lingkunganmu</span>
-                <span class="font-body-sm text-body-sm text-secondary">14.2 kg pangan terselamatkan • 8 Mitra terbantu</span>
+              <!-- Dual Action Buttons -->
+              <div class="grid grid-cols-2 gap-space-sm pt-1">
+                <button class="w-full py-3 px-space-sm rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-sm hover:opacity-95 active:scale-98 transition-all btn-partner-action" data-type="donasi" data-partner="Warung Makan Bu Sari">
+                  <span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
+                  <span>Donasi (Gratis)</span>
+                </button>
+                <button class="w-full py-3 px-space-sm rounded-xl bg-secondary-container text-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 hover:bg-secondary-container/70 active:scale-98 transition-all btn-partner-action" data-type="jual" data-partner="Warung Makan Bu Sari">
+                  <span class="material-symbols-outlined text-[18px]">sell</span>
+                  <span>Jual Murah (-50%)</span>
+                </button>
               </div>
             </div>
-            <span class="material-symbols-outlined text-secondary text-[20px]">chevron_right</span>
+          </section>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: DAFTAR SEMUA MITRA RESCUE -->
+        <!-- ============================================== -->
+        <div id="donasiListView" class="hidden flex flex-col gap-3">
+          <div class="bg-surface-container-lowest p-3 rounded-2xl shadow-sm flex items-center justify-between">
+            <span class="font-headline-sm text-headline-sm font-bold text-on-surface">4 Mitra Terverifikasi di Sekitarmu</span>
+            <span class="text-xs text-primary font-bold">Radius 2 km</span>
           </div>
-        </section>
+
+          <!-- Partner 1 -->
+          <div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col gap-3 border border-surface-container-high">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-bold text-lg">
+                  🍲
+                </div>
+                <div>
+                  <h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Warung Makan Bu Sari</h4>
+                  <p class="text-xs text-secondary">Kuliner UMKM • 0.3 km • Buka s/d 21:00</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-secondary-container text-primary text-xs font-bold">Pick-up Gratis</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Membutuhkan: Tomat segar, daging ayam, cabai, telur.</p>
+            <div class="flex gap-2">
+              <button class="flex-1 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1 btn-partner-action" data-type="donasi" data-partner="Warung Makan Bu Sari">
+                <span class="material-symbols-outlined text-[16px]">volunteer_activism</span> Donasi Sekarang
+              </button>
+              <button class="px-3 py-2 rounded-xl bg-surface-container text-on-surface font-bold text-xs flex items-center gap-1 btn-contact-wa" data-phone="08123456789">
+                <span class="material-symbols-outlined text-[16px]">chat</span> Chat WA
+              </button>
+            </div>
+          </div>
+
+          <!-- Partner 2 -->
+          <div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col gap-3 border border-surface-container-high">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-lg">
+                  🍱
+                </div>
+                <div>
+                  <h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Dapur Nusa Catering</h4>
+                  <p class="text-xs text-secondary">Katering Harian • 0.55 km • Buka s/d 18:00</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-secondary-container text-primary text-xs font-bold">Pick-up Gratis</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Membutuhkan: Sayuran hijau, wortel, susu UHT plain, bumbu.</p>
+            <div class="flex gap-2">
+              <button class="flex-1 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1 btn-partner-action" data-type="donasi" data-partner="Dapur Nusa Catering">
+                <span class="material-symbols-outlined text-[16px]">volunteer_activism</span> Donasi Sekarang
+              </button>
+              <button class="px-3 py-2 rounded-xl bg-surface-container text-on-surface font-bold text-xs flex items-center gap-1 btn-contact-wa" data-phone="08129876543">
+                <span class="material-symbols-outlined text-[16px]">chat</span> Chat WA
+              </button>
+            </div>
+          </div>
+
+          <!-- Partner 3 -->
+          <div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col gap-3 border border-surface-container-high">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-secondary-container text-primary flex items-center justify-center font-bold text-lg">
+                  🐾
+                </div>
+                <div>
+                  <h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Shelter Satwa Peduli</h4>
+                  <p class="text-xs text-secondary">Shelter Hewan • 1.2 km • Buka s/d 17:00</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-surface-container text-secondary text-xs font-semibold">Drop-off / Kurir</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Membutuhkan: Daging ayam, jeroan segar, beras, ikan.</p>
+            <div class="flex gap-2">
+              <button class="flex-1 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1 btn-partner-action" data-type="donasi" data-partner="Shelter Satwa Peduli">
+                <span class="material-symbols-outlined text-[16px]">volunteer_activism</span> Donasi Sekarang
+              </button>
+              <button class="px-3 py-2 rounded-xl bg-surface-container text-on-surface font-bold text-xs flex items-center gap-1 btn-contact-wa" data-phone="08134567890">
+                <span class="material-symbols-outlined text-[16px]">chat</span> Chat WA
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 3: RIWAYAT PENYELAMATAN & DONASI -->
+        <!-- ============================================== -->
+        <div id="donasiHistoryView" class="hidden flex flex-col gap-3">
+          <div class="bg-surface-container-lowest p-3.5 rounded-2xl shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[22px]">verified</span>
+              <span class="font-headline-sm text-headline-sm font-bold text-on-surface">Log Penyelamatan Pangan</span>
+            </div>
+            <span class="text-xs font-bold text-primary">${historyList.length} Transaksi</span>
+          </div>
+
+          ${historyList.length === 0 ? `
+            <div class="p-8 text-center bg-surface-container-lowest rounded-2xl flex flex-col items-center gap-2">
+              <span class="material-symbols-outlined text-secondary text-[40px]">history</span>
+              <span class="font-headline-sm text-headline-sm font-bold text-on-surface">Belum Ada Donasi</span>
+              <p class="text-xs text-secondary">Bahan makanan surplus yang kamu salurkan akan tercatat rapi di sini.</p>
+            </div>
+          ` : historyList.map(h => `
+            <div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col gap-2 border border-surface-container-high">
+              <div class="flex items-center justify-between">
+                <span class="font-headline-sm text-headline-sm font-bold text-on-surface">${h.partner}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary-container text-primary">${h.badge || 'Sukses'}</span>
+              </div>
+              <p class="text-xs text-secondary font-medium">${h.items}</p>
+              <div class="flex items-center justify-between pt-2 border-t border-surface-container-high text-xs text-secondary">
+                <span>🗓️ ${h.date}</span>
+                <span class="text-primary font-bold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                  ${h.status}
+                </span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
       </div>
     </div>
   `;

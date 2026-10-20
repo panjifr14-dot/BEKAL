@@ -78,7 +78,7 @@ export function renderDaftarScreen() {
             </label>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px]">person</span>
-              <input class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all" id="fullNameInput" placeholder="Andi Pratama" type="text" value="Andi Pratama" required/>
+              <input class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all" id="fullNameInput" placeholder="Contoh: Panji Fajar" type="text" required/>
             </div>
           </div>
 
@@ -90,7 +90,7 @@ export function renderDaftarScreen() {
             </label>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px]">mail</span>
-              <input class="w-full pl-11 pr-10 py-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all" id="emailInput" placeholder="andi@domain.com" type="email" value="andi@domain.com" required/>
+              <input class="w-full pl-11 pr-10 py-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all" id="emailInput" placeholder="nama@email.com" type="email" required/>
               <span class="material-symbols-outlined absolute right-3 text-primary text-[20px]">check_circle</span>
             </div>
           </div>
@@ -106,7 +106,7 @@ export function renderDaftarScreen() {
             </div>
             <div class="relative flex items-center">
               <span class="material-symbols-outlined absolute left-3.5 text-secondary text-[20px]">lock</span>
-              <input class="w-full pl-11 pr-11 py-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all tracking-wider" id="passwordInput" type="password" value="DapurBijak2024!" required/>
+              <input class="w-full pl-11 pr-11 py-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-primary/30 transition-all tracking-wider" id="passwordInput" type="password" placeholder="Buat kata sandi aman" required/>
               <button aria-label="Lihat kata sandi" class="absolute right-3 text-secondary p-1 rounded-full hover:bg-surface-container-high transition-colors" id="btnTogglePassword" type="button">
                 <span class="material-symbols-outlined text-[20px]" id="eyeIcon">visibility</span>
               </button>
